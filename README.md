@@ -1,2 +1,2 @@
 # NRedisBloom
-.Net Client for RedisBloom probabilistic module
+.NET Client for RedisBloom probabilistic module
