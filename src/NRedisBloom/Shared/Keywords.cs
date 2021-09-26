@@ -1,4 +1,4 @@
-﻿namespace NRedisBloom.BloomFilter
+﻿namespace NRedisBloom.Shared
 {
     internal static class Keywords
     {
@@ -13,5 +13,9 @@
         internal const string NumberOfFilters = "Number of filters";
         internal const string NumberOfItemsInserted = "Number of items inserted";
         internal const string ExpansionRate = "Expansion rate";
+        internal const string TopK = "k";
+        internal const string Width = "width";
+        internal const string Depth = "depth";
+        internal const string Decay = "decay";
     }
 }

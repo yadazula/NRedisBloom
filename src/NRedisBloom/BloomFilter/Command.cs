@@ -1,4 +1,4 @@
-﻿namespace NRedisBloom
+﻿namespace NRedisBloom.BloomFilter
 {
     internal static class Command
     {

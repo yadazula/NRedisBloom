@@ -1,4 +1,5 @@
-﻿using StackExchange.Redis;
+﻿using NRedisBloom.Shared;
+using StackExchange.Redis;
 
 namespace NRedisBloom.BloomFilter
 {

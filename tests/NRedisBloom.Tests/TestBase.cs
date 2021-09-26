@@ -1,8 +1,10 @@
 ﻿using System;
 using StackExchange.Redis;
+using Xunit;
 
 namespace NRedisBloom.Tests
 {
+    [Collection("Non-Parallel Collection")]
     public abstract class TestBase : IDisposable
     {
         private ConnectionMultiplexer _muxer;
@@ -30,4 +32,8 @@ namespace NRedisBloom.Tests
             _muxer.Dispose();
         }
     }
+
+    [CollectionDefinition("Non-Parallel Collection", DisableParallelization = true)]
+    [TestCaseOrderer("Xunit2AcceptanceTests+TestOrdering+AlphabeticalOrderer", "test.xunit.execution")]
+    public class TestClassNonParallelCollectionDefinition { }
 }

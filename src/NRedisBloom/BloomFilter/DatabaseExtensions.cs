@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using NRedisBloom.Shared;
 using StackExchange.Redis;
 
 namespace NRedisBloom.BloomFilter
@@ -165,29 +165,11 @@ namespace NRedisBloom.BloomFilter
             return result.ToString() == Keywords.OK;
         }
 
-        /// <summary>
-        /// Adds a value to the beginning of the sequence
-        /// </summary>
-        /// <param name="first">Value to prepend to source</param>
-        /// <param name="source">A sequence of values</param>
-        /// <typeparam name="T">Type of the elements</typeparam>
-        /// <returns>A new sequence that begins with first</returns>
-        private static object[] PrependToArray<T>(this T first, params T[] source)
-        {
-            var destination = new object[source.Length + 1];
-
-            destination[0] = first;
-
-            Array.Copy(source, 0, destination, 1, source.Length);
-
-            return destination;
-        }
-
         private static ICollection<object> BuildArgsForReserve(string name, long initCapacity, double errorRate,
             int? expansion,
             bool? nonScaling)
         {
-            var args = new List<object> {name, errorRate, initCapacity};
+                var args = new List<object> {name, errorRate, initCapacity};
 
             if (expansion.HasValue)
             {

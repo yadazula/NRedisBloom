@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using NRedisBloom.Shared;
 using StackExchange.Redis;
 
 namespace NRedisBloom.BloomFilter
