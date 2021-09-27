@@ -12,17 +12,13 @@ namespace NRedisBloom.Tests
         [Fact]
         public void ReserveBasic()
         {
-            var filterName = FilterName();
-
-            Assert.True(Db.TopKReserve(filterName, 50, 2000, 7, 0.925));
+            Assert.True(Db.TopKReserve(FilterName(), 50, 2000, 7, 0.925));
         }
 
         [Fact]
         public async Task ReserveBasicAsync()
         {
-            var filterName = FilterName();
-
-            Assert.True(await Db.TopKReserveAsync(filterName, 50, 2000, 7, 0.925));
+            Assert.True(await Db.TopKReserveAsync(FilterName(), 50, 2000, 7, 0.925));
         }
 
         [Fact]
@@ -58,13 +54,13 @@ namespace NRedisBloom.Tests
         [Fact]
         public void AddFilterNotExist()
         {
-            Assert.Throws<RedisServerException>(() => Db.TopKAdd(nameof(AddFilterNotExist), "foo"));
+            Assert.Throws<RedisServerException>(() => Db.TopKAdd(FilterName(), "foo"));
         }
 
         [Fact]
         public async Task AddFilterNotExistAsync()
         {
-            await Assert.ThrowsAsync<RedisServerException>(() => Db.TopKAddAsync(nameof(AddFilterNotExistAsync), "foo"));
+            await Assert.ThrowsAsync<RedisServerException>(() => Db.TopKAddAsync(FilterName(), "foo"));
         }
 
         [Fact]
@@ -233,6 +229,18 @@ namespace NRedisBloom.Tests
             Assert.Equal(width, topKInfo.Width);
             Assert.Equal(depth, topKInfo.Depth);
             Assert.Equal(decay, topKInfo.Decay);
+        }
+
+        [Fact]
+        public void InfoFilterNotExist()
+        {
+            Assert.Throws<RedisServerException>(() => Db.TopKInfo(FilterName()));
+        }
+
+        [Fact]
+        public async Task InfoFilterNotExistAsync()
+        {
+            await Assert.ThrowsAsync<RedisServerException>(() => Db.TopKInfoAsync(FilterName()));
         }
 
         private string FilterName([CallerMemberName] string memberName = "")
