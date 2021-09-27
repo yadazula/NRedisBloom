@@ -2,6 +2,9 @@
 
 namespace NRedisBloom.Shared
 {
+    /// <summary>
+    /// Extension methods
+    /// </summary>
     public static class ObjectExtensions
     {
         /// <summary>

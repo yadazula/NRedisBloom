@@ -1,0 +1,38 @@
+name: CI Builds
+
+on:
+  pull_request:
+  push:
+    branches:
+    - main
+    paths:
+    - '*'
+
+jobs:
+  main:
+    name: NRedisBloom (Ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v1
+    - name: Setup .NET Core 3.x
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.1.x'
+    - name: Setup .NET 5.x
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '5.0.x'
+    - name: .NET Build
+      run: dotnet build Build.csproj -c Release /p:CI=true
+    - name: Start Redis Services (docker-compose)
+      run: docker run -p 6379:6379 --name redis-bloom -d redislabs/rebloom:latest
+    - name: NRedisBloom.Tests
+      run: dotnet test tests/NRedisBloom.Tests/NRedisBloom.Tests.csproj -c Release --logger trx --results-directory ./test-results/ /p:CI=true
+    - uses: dorny/test-reporter@v1
+      continue-on-error: true
+      if: success() || failure()
+      with:
+        name: NRedisBloom.Tests (Ubuntu) - Results
+        path: 'test-results/*.trx'
+        reporter: dotnet-trx

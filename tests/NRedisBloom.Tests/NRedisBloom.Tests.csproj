@@ -1,24 +1,27 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
-        <Authors>Gokhan Demir (yadazula)</Authors>
-        <PackageProjectUrl>https://github.com/yadazula/NRedisBloom</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/yadazula/NRedisBloom</RepositoryUrl>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
+    <LangVersion>9</LangVersion>
+    <Authors>Gokhan Demir (yadazula)</Authors>
+    <PackageProjectUrl>https://github.com/yadazula/NRedisBloom</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/yadazula/NRedisBloom</RepositoryUrl>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="coverlet.collector" Version="3.1.0">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
-      <PackageReference Include="StackExchange.Redis" Version="2.2.50" />
-      <PackageReference Include="xunit" Version="2.4.1" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="3.1.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="GitHubActionsTestLogger" Version="1.2.0"/>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0"/>
+    <PackageReference Include="StackExchange.Redis" Version="2.2.50"/>
+    <PackageReference Include="xunit" Version="2.4.1"/>
+  </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\src\NRedisBloom\NRedisBloom.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\NRedisBloom\NRedisBloom.csproj"/>
+  </ItemGroup>
 
 </Project>
