@@ -23,3 +23,4 @@ launchSettings.json
 *.diagsession
 TestResults/
 BenchmarkDotNet.Artifacts/
+/test-results

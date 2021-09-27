@@ -25,7 +25,7 @@ jobs:
         dotnet-version: '5.0.x'
     - name: .NET Build
       run: dotnet build Build.csproj -c Release /p:CI=true
-    - name: Start Redis Services (docker-compose)
+    - name: Start Redis Service (docker)
       run: docker run -p 6379:6379 --name redis-bloom -d redislabs/rebloom:latest
     - name: NRedisBloom.Tests
       run: dotnet test tests/NRedisBloom.Tests/NRedisBloom.Tests.csproj -c Release --logger trx --results-directory ./test-results/ /p:CI=true
