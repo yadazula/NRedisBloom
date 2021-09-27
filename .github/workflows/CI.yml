@@ -29,7 +29,8 @@ jobs:
       run: docker run -p 6379:6379 --name redis-bloom -d redislabs/rebloom:latest
     - name: NRedisBloom.Tests
       run: dotnet test tests/NRedisBloom.Tests/NRedisBloom.Tests.csproj -c Release --logger trx --results-directory ./test-results/ /p:CI=true
-    - uses: dorny/test-reporter@v1
+    - name: Publish Test Results   
+      uses: dorny/test-reporter@v1
       continue-on-error: true
       if: success() || failure()
       with:
