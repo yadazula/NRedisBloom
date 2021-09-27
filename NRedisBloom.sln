@@ -7,13 +7,12 @@ ProjectSection(SolutionItems) = preProject
 	.gitignore = .gitignore
 	LICENSE = LICENSE
 	README.md = README.md
+	.github\workflows\CI.yml = .github\workflows\CI.yml
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NRedisBloom", "src\NRedisBloom\NRedisBloom.csproj", "{C4943B3B-11E1-460B-8744-8613BAE7F66B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NRedisBloom.Tests", "tests\NRedisBloom.Tests\NRedisBloom.Tests.csproj", "{DDCC41EB-CE20-41AA-BD73-206BBBEB3F11}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = ".github", ".github\.github.csproj", "{6BE971D5-F5C7-4961-87ED-169C02B62E63}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,9 +28,5 @@ Global
 		{DDCC41EB-CE20-41AA-BD73-206BBBEB3F11}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DDCC41EB-CE20-41AA-BD73-206BBBEB3F11}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DDCC41EB-CE20-41AA-BD73-206BBBEB3F11}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6BE971D5-F5C7-4961-87ED-169C02B62E63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6BE971D5-F5C7-4961-87ED-169C02B62E63}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6BE971D5-F5C7-4961-87ED-169C02B62E63}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6BE971D5-F5C7-4961-87ED-169C02B62E63}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
