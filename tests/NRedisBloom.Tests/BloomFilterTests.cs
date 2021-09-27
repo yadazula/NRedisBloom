@@ -154,7 +154,7 @@ namespace NRedisBloom.Tests
         }
 
         [Fact]
-        public void AddExistString()
+        public void AddExist()
         {
             var filterName = FilterName();
 
@@ -165,7 +165,7 @@ namespace NRedisBloom.Tests
         }
 
         [Fact]
-        public async Task AddExistStringAsync()
+        public async Task AddExistAsync()
         {
             var filterName = FilterName();
 
