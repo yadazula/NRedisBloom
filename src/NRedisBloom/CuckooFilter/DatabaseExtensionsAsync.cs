@@ -62,6 +62,17 @@ namespace NRedisBloom.CuckooFilter
             return (bool)result;
         }
 
+        /// <summary>
+        /// Adds one or more items to a cuckoo filter
+        /// <a href="https://oss.redis.com/redisbloom/Cuckoo_Commands/#cfinsert">Command Reference</a>
+        /// </summary>
+        /// <param name="db">Database instance</param>
+        /// <param name="key">The name of the filter</param>
+        /// <param name="items">Items to add to the filter</param>
+        /// <returns>
+        /// An array of booleans of the same length as the number of values.
+        /// Each boolean values indicates whether corresponding item is inserted.
+        /// </returns>
         public static async Task<bool[]> CuckooFilterInsertAsync(this IDatabase db, string key, params string[] items)
         {
             var args = BuildArgsForInsert(key, null, items);
