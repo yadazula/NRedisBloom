@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using NRedisBloom.Shared;
 using StackExchange.Redis;
 
@@ -143,6 +144,96 @@ namespace NRedisBloom.CuckooFilter
             var result = db.Execute(Command.InsertAdvanced, args);
 
             return (bool[])result;
+        }
+
+        /// <summary>
+        /// Check if an item exists in a cuckoo filter
+        /// <a href="https://oss.redis.com/redisbloom/Cuckoo_Commands/#cfexists">Command Reference</a>
+        /// </summary>
+        /// <param name="db">Database instance</param>
+        /// <param name="key">The name of the filter</param>
+        /// <param name="item">The item to check for</param>
+        /// <returns><code>true</code> if the item may exist in the filter, <code>false</code> if the item does not exist in the filter</returns>
+        public static bool CuckooFilterExists(this IDatabase db, string key, string item)
+        {
+            var result = db.Execute(Command.Exists, key, item);
+
+            return (bool)result;
+        }
+
+        /// <summary>
+        /// Deletes an item once from the filter
+        /// <a href="https://oss.redis.com/redisbloom/Cuckoo_Commands/#cfdel">Command Reference</a>
+        /// </summary>
+        /// <param name="db">Database instance</param>
+        /// <param name="key">The name of the filter</param>
+        /// <param name="item">The item to delete from the filter</param>
+        /// <returns><code>true</code> if the item has been deleted, <code>false</code> if the item was not found</returns>
+        public static bool CuckooFilterDelete(this IDatabase db, string key, string item)
+        {
+            var result = db.Execute(Command.Delete, key, item);
+
+            return (bool)result;
+        }
+
+        /// <summary>
+        /// Returns the number of times an item may be in the filter
+        /// <a href="https://oss.redis.com/redisbloom/Cuckoo_Commands/#cfcount">Command Reference</a>
+        /// </summary>
+        /// <param name="db">Database instance</param>
+        /// <param name="key">The name of the filter</param>
+        /// <param name="item">The item to count</param>
+        /// <returns>The number of times the item exists in the filter</returns>
+        public static long CuckooFilterCount(this IDatabase db, string key, string item)
+        {
+            var result = db.Execute(Command.Count, key, item);
+
+            return (long)result;
+        }
+
+        /// <summary>
+        /// Begins an incremental save of the cuckoo filter
+        /// <a href="https://oss.redis.com/redisbloom/Cuckoo_Commands/#cfscandump">Command Reference</a>
+        /// </summary>
+        /// <param name="db">Database instance</param>
+        /// <param name="key">The name of the filter</param>
+        /// <param name="iterator">Iterator value; either 0 or the iterator from a previous invocation of this command</param>
+        /// <returns>An pair of Iterator and Data. If Iterator is 0, then it means iteration has completed.</returns>
+        public static (long Iterator, byte[] Data) CuckooFilterScanDump(this IDatabase db, string key, long iterator)
+        {
+            var result = (RedisResult[]) db.Execute(Command.ScanDump, key, iterator);
+
+            return ((long) result[0], (byte[]) result[1]);
+        }
+
+        /// <summary>
+        /// Restores a filter previously saved using <see cref="CuckooFilterScanDump"/>.
+        /// <a href="https://oss.redis.com/redisbloom/Cuckoo_Commands/#cfloadchunk">Command Reference</a>
+        /// </summary>
+        /// <param name="db">Database instance</param>
+        /// <param name="key">The name of the filter</param>
+        /// <param name="iterator">Iterator value associated with data (returned by <see cref="CuckooFilterScanDump"/>)</param>
+        /// <param name="data">Current data chunk (returned by <see cref="CuckooFilterScanDump"/>)</param>
+        /// <returns><code>true</code> if chunk is restored</returns>
+        public static bool CuckooFilterLoadChunk(this IDatabase db, string key, long iterator, byte[] data)
+        {
+            var result = db.Execute(Command.LoadChunk, key, iterator, data);
+
+            return result.ToString() == Keywords.OK;
+        }
+
+        /// <summary>
+        /// Gets information about the filter
+        /// <a href="https://oss.redis.com/redisbloom/Cuckoo_Commands/#cfinfo">Command Reference</a>
+        /// </summary>
+        /// <param name="db">Database instance</param>
+        /// <param name="key">Name of the filter</param>
+        /// <returns>An instance of <see cref="InfoResult"/> that contains information about the filter</returns>
+        public static InfoResult CuckooFilterInfo(this IDatabase db, string key)
+        {
+            var result = db.Execute(Command.Info, key);
+
+            return InfoResult.Create((RedisResult[]) result);
         }
 
         private static List<object> BuildArgsForReserve(string key, long capacity, long? bucketSize,
