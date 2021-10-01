@@ -37,8 +37,8 @@ namespace NRedisBloom.CuckooFilter
         /// <a href="https://oss.redis.com/redisbloom/Cuckoo_Commands/#cfadd">Command Reference</a>
         /// </summary>
         /// <param name="db">Database instance</param>
-        /// <param name="key">The name of the filter</param>
-        /// <param name="item">The item to add</param>
+        /// <param name="key">Name of the filter</param>
+        /// <param name="item">Item to add</param>
         /// <returns><code>true</code> on success, otherwise <code>false</code></returns>
         public static async Task<bool> CuckooFilterAddAsync(this IDatabase db, string key, string item)
         {
@@ -52,8 +52,8 @@ namespace NRedisBloom.CuckooFilter
         /// <a href="https://oss.redis.com/redisbloom/Cuckoo_Commands/#cfaddnx">Command Reference</a>
         /// </summary>
         /// <param name="db">Database instance</param>
-        /// <param name="key">The name of the filter</param>
-        /// <param name="item">The item to add</param>
+        /// <param name="key">Name of the filter</param>
+        /// <param name="item">Item to add</param>
         /// <returns><code>true</code> item was added to the filter, <code>false</code> if the item already exists</returns>
         public static async Task<bool> CuckooFilterAddAdvancedAsync(this IDatabase db, string key, string item)
         {
@@ -67,7 +67,7 @@ namespace NRedisBloom.CuckooFilter
         /// <a href="https://oss.redis.com/redisbloom/Cuckoo_Commands/#cfinsert">Command Reference</a>
         /// </summary>
         /// <param name="db">Database instance</param>
-        /// <param name="key">The name of the filter</param>
+        /// <param name="key">Name of the filter</param>
         /// <param name="items">Items to add to the filter</param>
         /// <returns>
         /// An array of booleans of the same length as the number of values.
@@ -87,7 +87,7 @@ namespace NRedisBloom.CuckooFilter
         /// <a href="https://oss.redis.com/redisbloom/Cuckoo_Commands/#cfinsert">Command Reference</a>
         /// </summary>
         /// <param name="db">Database instance</param>
-        /// <param name="key">The name of the filter</param>
+        /// <param name="key">Name of the filter</param>
         /// <param name="options"><see cref="InsertOptions"/></param>
         /// <param name="items">Items to add to the filter</param>
         /// <returns>
@@ -109,7 +109,7 @@ namespace NRedisBloom.CuckooFilter
         /// <a href="https://oss.redis.com/redisbloom/Cuckoo_Commands/#cfinsertnx">Command Reference</a>
         /// </summary>
         /// <param name="db">Database instance</param>
-        /// <param name="key">The name of the filter</param>
+        /// <param name="key">Name of the filter</param>
         /// <param name="items">Items to add to the filter</param>
         /// <returns>
         /// An array of booleans of the same length as the number of values.
@@ -129,7 +129,7 @@ namespace NRedisBloom.CuckooFilter
         /// <a href="https://oss.redis.com/redisbloom/Cuckoo_Commands/#cfinsertnx">Command Reference</a>
         /// </summary>
         /// <param name="db">Database instance</param>
-        /// <param name="key">The name of the filter</param>
+        /// <param name="key">Name of the filter</param>
         /// <param name="options"><see cref="InsertOptions"/></param>
         /// <param name="items">Items to add to the filter</param>
         /// <returns>
@@ -151,8 +151,8 @@ namespace NRedisBloom.CuckooFilter
         /// <a href="https://oss.redis.com/redisbloom/Cuckoo_Commands/#cfexists">Command Reference</a>
         /// </summary>
         /// <param name="db">Database instance</param>
-        /// <param name="key">The name of the filter</param>
-        /// <param name="item">The item to check for</param>
+        /// <param name="key">Name of the filter</param>
+        /// <param name="item">Item to check for</param>
         /// <returns><code>true</code> if the item may exist in the filter, <code>false</code> if the item does not exist in the filter</returns>
         public static async Task<bool> CuckooFilterExistsAsync(this IDatabase db, string key, string item)
         {
@@ -166,7 +166,7 @@ namespace NRedisBloom.CuckooFilter
         /// <a href="https://oss.redis.com/redisbloom/Cuckoo_Commands/#cfdel">Command Reference</a>
         /// </summary>
         /// <param name="db">Database instance</param>
-        /// <param name="key">The name of the filter</param>
+        /// <param name="key">Name of the filter</param>
         /// <param name="item"></param>
         /// <returns><code>true</code> if the item has been deleted, <code>false</code> if the item was not found</returns>
         public static async Task<bool> CuckooFilterDeleteAsync(this IDatabase db, string key, string item)
@@ -181,8 +181,8 @@ namespace NRedisBloom.CuckooFilter
         /// <a href="https://oss.redis.com/redisbloom/Cuckoo_Commands/#cfcount">Command Reference</a>
         /// </summary>
         /// <param name="db">Database instance</param>
-        /// <param name="key">The name of the filter</param>
-        /// <param name="item">The item to count</param>
+        /// <param name="key">Name of the filter</param>
+        /// <param name="item">Item to count</param>
         /// <returns>The number of times the item exists in the filter</returns>
         public static async Task<long> CuckooFilterCountAsync(this IDatabase db, string key, string item)
         {
@@ -196,7 +196,7 @@ namespace NRedisBloom.CuckooFilter
         /// <a href="https://oss.redis.com/redisbloom/Cuckoo_Commands/#cfscandump">Command Reference</a>
         /// </summary>
         /// <param name="db">Database instance</param>
-        /// <param name="key">The name of the filter</param>
+        /// <param name="key">Name of the filter</param>
         /// <param name="iterator">Iterator value; either 0 or the iterator from a previous invocation of this command</param>
         /// <returns>An pair of Iterator and Data. If Iterator is 0, then it means iteration has completed.</returns>
         public static async Task<(long Iterator, byte[] Data)> CuckooFilterScanDumpAsync(this IDatabase db, string key, long iterator)
@@ -211,7 +211,7 @@ namespace NRedisBloom.CuckooFilter
         /// <a href="https://oss.redis.com/redisbloom/Cuckoo_Commands/#cfloadchunk">Command Reference</a>
         /// </summary>
         /// <param name="db">Database instance</param>
-        /// <param name="key">The name of the filter</param>
+        /// <param name="key">Name of the filter</param>
         /// <param name="iterator">Iterator value associated with data (returned by <see cref="CuckooFilterScanDump"/>)</param>
         /// <param name="data">Current data chunk (returned by <see cref="CuckooFilterScanDump"/>)</param>
         /// <returns><code>true</code> if chunk is restored</returns>

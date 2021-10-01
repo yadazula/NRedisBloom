@@ -23,5 +23,7 @@
         internal const string Width = "width";
         internal const string Depth = "depth";
         internal const string Decay = "decay";
+        internal const string Count = "count";
+        internal const string Weights = "WEIGHTS";
     }
 }

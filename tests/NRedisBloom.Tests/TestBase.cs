@@ -15,9 +15,7 @@ namespace NRedisBloom.Tests
             var options = new ConfigurationOptions
             {
                 EndPoints = { "127.0.0.1:6379" },
-                AllowAdmin = true,
-                ConnectTimeout = 2000,
-                SyncTimeout = 15000,
+                AllowAdmin = true
             };
             _muxer = ConnectionMultiplexer.Connect(options);
 

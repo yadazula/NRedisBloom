@@ -14,8 +14,4 @@
     <PackageReference Include="StackExchange.Redis" Version="2.2.50" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="CountMinSketch" />
-  </ItemGroup>
-
 </Project>
