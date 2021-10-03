@@ -38,3 +38,9 @@ jobs:
         name: NRedisBloom.Tests (Ubuntu) - Results
         path: 'test-results/*.trx'
         reporter: dotnet-trx
+    - name: Generate Coverage Report
+      run: dotnet test tests/NRedisBloom.Tests/NRedisBloom.Tests.csproj -c Release /p:CoverletOutput=../../coverage-results/ /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+    - name: Upload Coverage Report to Codecov 
+      uses: codecov/codecov-action@v2
+      with:
+        directory: ./coverage-results/
