@@ -77,6 +77,8 @@ await topk.ListAsync(key);
 await topk.InfoAsync(key);
 ```
 
+There are a suite of tests in the repository that should be sufficient to serve as examples on how to use all supported commands.
+
 Questions and Contributions
 ---
 
