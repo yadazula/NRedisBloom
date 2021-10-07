@@ -8,6 +8,8 @@
     <RepositoryUrl>https://github.com/yadazula/NRedisBloom</RepositoryUrl>
     <PackageTags>Redis;BloomFilter;Modules;RedisBloom</PackageTags>
     <RepositoryType>git</RepositoryType>
+    <Description>.NET client for RedisBloom probabilistic module</Description>
+    <PackageLicenseUrl>https://github.com/yadazula/NRedisBloom/blob/main/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
 
   <ItemGroup>
