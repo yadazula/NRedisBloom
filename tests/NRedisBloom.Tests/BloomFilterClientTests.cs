@@ -6,17 +6,24 @@ using Xunit;
 
 namespace NRedisBloom.Tests
 {
-    public class BloomFilterTests : TestBase
+    public class BloomFilterClientTests : TestBase
     {
+        private readonly BloomFilterClient _bloomFilter;
+
+        public BloomFilterClientTests()
+        {
+            _bloomFilter = new BloomFilterClient(Db);
+        }
+
         [Fact]
         public void ReserveBasic()
         {
             var filterName = FilterName();
 
-            Assert.True(Db.BloomFilterReserve(filterName, 100, 0.001));
-            Assert.True(Db.BloomFilterAdd(filterName, "val1"));
-            Assert.True(Db.BloomFilterExists(filterName, "val1"));
-            Assert.False(Db.BloomFilterExists(filterName, "val2"));
+            Assert.True(_bloomFilter.Reserve(filterName, 100, 0.001));
+            Assert.True(_bloomFilter.Add(filterName, "val1"));
+            Assert.True(_bloomFilter.Exists(filterName, "val1"));
+            Assert.False(_bloomFilter.Exists(filterName, "val2"));
         }
 
         [Fact]
@@ -24,38 +31,38 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            Assert.True(await Db.BloomFilterReserveAsync(filterName, 100, 0.001));
-            Assert.True(await Db.BloomFilterAddAsync(filterName, "val1"));
-            Assert.True(await Db.BloomFilterExistsAsync(filterName, "val1"));
-            Assert.False(await Db.BloomFilterExistsAsync(filterName, "val2"));
+            Assert.True(await _bloomFilter.ReserveAsync(filterName, 100, 0.001));
+            Assert.True(await _bloomFilter.AddAsync(filterName, "val1"));
+            Assert.True(await _bloomFilter.ExistsAsync(filterName, "val1"));
+            Assert.False(await _bloomFilter.ExistsAsync(filterName, "val2"));
         }
 
         [Fact]
         public void ReserveValidateZeroCapacity()
         {
             Assert.Throws<RedisServerException>(() =>
-                Db.BloomFilterReserve(FilterName(), 0, 0.001));
+                _bloomFilter.Reserve(FilterName(), 0, 0.001));
         }
 
         [Fact]
         public async Task ReserveValidateZeroCapacityAsync()
         {
             await Assert.ThrowsAsync<RedisServerException>(() =>
-                Db.BloomFilterReserveAsync(FilterName(), 0, 0.001));
+                _bloomFilter.ReserveAsync(FilterName(), 0, 0.001));
         }
 
         [Fact]
         public void ReserveValidateZeroError()
         {
             Assert.Throws<RedisServerException>(() =>
-                Db.BloomFilterReserve(FilterName(), 100, 0));
+                _bloomFilter.Reserve(FilterName(), 100, 0));
         }
 
         [Fact]
         public async Task ReserveValidateZeroErrorAsync()
         {
             await Assert.ThrowsAsync<RedisServerException>(() =>
-                Db.BloomFilterReserveAsync(FilterName(), 100, 0));
+                _bloomFilter.ReserveAsync(FilterName(), 100, 0));
         }
 
         [Fact]
@@ -63,9 +70,9 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            Assert.True(Db.BloomFilterReserve(filterName, 100, 0.1));
+            Assert.True(_bloomFilter.Reserve(filterName, 100, 0.1));
 
-            Assert.Throws<RedisServerException>(() => Db.BloomFilterReserve(filterName, 100, 0.1));
+            Assert.Throws<RedisServerException>(() => _bloomFilter.Reserve(filterName, 100, 0.1));
         }
 
         [Fact]
@@ -73,23 +80,23 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            Assert.True(await Db.BloomFilterReserveAsync(filterName, 100, 0.1));
+            Assert.True(await _bloomFilter.ReserveAsync(filterName, 100, 0.1));
 
-            await Assert.ThrowsAsync<RedisServerException>(() => Db.BloomFilterReserveAsync(filterName, 100, 0.1));
+            await Assert.ThrowsAsync<RedisServerException>(() => _bloomFilter.ReserveAsync(filterName, 100, 0.1));
         }
 
         [Fact]
         public void ReserveNonScalingExpand()
         {
             Assert.Throws<RedisServerException>(() =>
-                Db.BloomFilterReserve(FilterName(), 10, 0.01, expansion: 2, nonScaling: true));
+                _bloomFilter.Reserve(FilterName(), 10, 0.01, expansion: 2, nonScaling: true));
         }
 
         [Fact]
         public async Task ReserveNonScalingExpandAsync()
         {
             await Assert.ThrowsAsync<RedisServerException>(() =>
-                Db.BloomFilterReserveAsync(FilterName(), 10, 0.01, expansion: 2,
+                _bloomFilter.ReserveAsync(FilterName(), 10, 0.01, expansion: 2,
                     nonScaling: true));
         }
 
@@ -105,7 +112,7 @@ namespace NRedisBloom.Tests
                 NonScaling = true
             };
 
-            var result = Db.BloomFilterInsert(FilterName(), insertOptions, "foo", "bar");
+            var result = _bloomFilter.Insert(FilterName(), insertOptions, "foo", "bar");
 
             Assert.Equal(2, result.Length);
             foreach (var item in result)
@@ -120,7 +127,7 @@ namespace NRedisBloom.Tests
             var insertOptions = new InsertOptions { NoCreate = true };
 
             Assert.Throws<RedisServerException>(() =>
-                Db.BloomFilterInsert(FilterName(), insertOptions, "foo"));
+                _bloomFilter.Insert(FilterName(), insertOptions, "foo"));
         }
 
         [Fact]
@@ -135,7 +142,7 @@ namespace NRedisBloom.Tests
                 NonScaling = true
             };
 
-            var result = await Db.BloomFilterInsertAsync(FilterName(), insertOptions, "foo", "bar");
+            var result = await _bloomFilter.InsertAsync(FilterName(), insertOptions, "foo", "bar");
 
             Assert.Equal(2, result.Length);
             foreach (var item in result)
@@ -150,7 +157,7 @@ namespace NRedisBloom.Tests
             var insertOptions = new InsertOptions { NoCreate = true };
 
             await Assert.ThrowsAsync<RedisServerException>(() =>
-                Db.BloomFilterInsertAsync(FilterName(), insertOptions, "foo"));
+                _bloomFilter.InsertAsync(FilterName(), insertOptions, "foo"));
         }
 
         [Fact]
@@ -158,10 +165,10 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            Assert.True(Db.BloomFilterAdd(filterName, "foo"));
-            Assert.True(Db.BloomFilterExists(filterName, "foo"));
-            Assert.False(Db.BloomFilterExists(filterName, "bar"));
-            Assert.False(Db.BloomFilterAdd(filterName, "foo"));
+            Assert.True(_bloomFilter.Add(filterName, "foo"));
+            Assert.True(_bloomFilter.Exists(filterName, "foo"));
+            Assert.False(_bloomFilter.Exists(filterName, "bar"));
+            Assert.False(_bloomFilter.Add(filterName, "foo"));
         }
 
         [Fact]
@@ -169,22 +176,22 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            Assert.True(await Db.BloomFilterAddAsync(filterName, "foo"));
-            Assert.True(await Db.BloomFilterExistsAsync(filterName, "foo"));
-            Assert.False(await Db.BloomFilterExistsAsync(filterName, "bar"));
-            Assert.False(await Db.BloomFilterAddAsync(filterName, "foo"));
+            Assert.True(await _bloomFilter.AddAsync(filterName, "foo"));
+            Assert.True(await _bloomFilter.ExistsAsync(filterName, "foo"));
+            Assert.False(await _bloomFilter.ExistsAsync(filterName, "bar"));
+            Assert.False(await _bloomFilter.AddAsync(filterName, "foo"));
         }
 
         [Fact]
         public void TestExistsNonExist()
         {
-            Assert.False(Db.BloomFilterExists(FilterName(), "foo"));
+            Assert.False(_bloomFilter.Exists(FilterName(), "foo"));
         }
 
         [Fact]
         public async Task TestExistsNonExistAsync()
         {
-            Assert.False(await Db.BloomFilterExistsAsync(FilterName(), "foo"));
+            Assert.False(await _bloomFilter.ExistsAsync(FilterName(), "foo"));
         }
 
         [Fact]
@@ -192,27 +199,27 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            var result = Db.BloomFilterAddMultiple(filterName, "foo", "bar", "baz");
+            var result = _bloomFilter.AddMultiple(filterName, "foo", "bar", "baz");
             Assert.Equal(3, result.Length);
             foreach (var item in result)
             {
                 Assert.True(item);
             }
 
-            result = Db.BloomFilterExistsMultiple(filterName, "foo", "bar", "baz");
+            result = _bloomFilter.ExistsMultiple(filterName, "foo", "bar", "baz");
             Assert.Equal(3, result.Length);
             foreach (var item in result)
             {
                 Assert.True(item);
             }
 
-            result = Db.BloomFilterAddMultiple(filterName, "newElem", "bar", "baz");
+            result = _bloomFilter.AddMultiple(filterName, "newElem", "bar", "baz");
             Assert.Equal(3, result.Length);
             Assert.True(result[0]);
             Assert.False(result[1]);
             Assert.False(result[2]);
 
-            result = Db.BloomFilterExistsMultiple(filterName, "foo", "notExist", "bar");
+            result = _bloomFilter.ExistsMultiple(filterName, "foo", "notExist", "bar");
             Assert.Equal(3, result.Length);
             Assert.True(result[0]);
             Assert.False(result[1]);
@@ -224,27 +231,27 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            var result = await Db.BloomFilterAddMultipleAsync(filterName, "foo", "bar", "baz");
+            var result = await _bloomFilter.AddMultipleAsync(filterName, "foo", "bar", "baz");
             Assert.Equal(3, result.Length);
             foreach (var item in result)
             {
                 Assert.True(item);
             }
 
-            result = await Db.BloomFilterExistsMultipleAsync(filterName, "foo", "bar", "baz");
+            result = await _bloomFilter.ExistsMultipleAsync(filterName, "foo", "bar", "baz");
             Assert.Equal(3, result.Length);
             foreach (var item in result)
             {
                 Assert.True(item);
             }
 
-            result = await Db.BloomFilterAddMultipleAsync(filterName, "newElem", "bar", "baz");
+            result = await _bloomFilter.AddMultipleAsync(filterName, "newElem", "bar", "baz");
             Assert.Equal(3, result.Length);
             Assert.True(result[0]);
             Assert.False(result[1]);
             Assert.False(result[2]);
 
-            result = await Db.BloomFilterExistsMultipleAsync(filterName, "foo", "notExist", "bar");
+            result = await _bloomFilter.ExistsMultipleAsync(filterName, "foo", "notExist", "bar");
             Assert.Equal(3, result.Length);
             Assert.True(result[0]);
             Assert.False(result[1]);
@@ -259,9 +266,9 @@ namespace NRedisBloom.Tests
             const int capacity = 100;
             const int expansion = 2;
 
-            Db.BloomFilterReserve(filterName, capacity, 0.01, expansion: expansion);
+            _bloomFilter.Reserve(filterName, capacity, 0.01, expansion: expansion);
 
-            var filterInfo = Db.BloomFilterInfo(filterName);
+            var filterInfo = _bloomFilter.Info(filterName);
             Assert.NotNull(filterInfo);
             Assert.Equal(capacity, filterInfo.Capacity);
             Assert.True(filterInfo.Size > 0);
@@ -278,9 +285,9 @@ namespace NRedisBloom.Tests
             const int capacity = 100;
             const int expansion = 2;
 
-            await Db.BloomFilterReserveAsync(filterName, capacity, 0.01, expansion: expansion);
+            await _bloomFilter.ReserveAsync(filterName, capacity, 0.01, expansion: expansion);
 
-            var filterInfo = await Db.BloomFilterInfoAsync(filterName);
+            var filterInfo = await _bloomFilter.InfoAsync(filterName);
             Assert.NotNull(filterInfo);
             Assert.Equal(capacity, filterInfo.Capacity);
             Assert.True(filterInfo.Size > 0);
@@ -292,13 +299,13 @@ namespace NRedisBloom.Tests
         [Fact]
         public void InfoFilterNotExist()
         {
-            Assert.Throws<RedisServerException>(() => Db.BloomFilterInfo(FilterName()));
+            Assert.Throws<RedisServerException>(() => _bloomFilter.Info(FilterName()));
         }
 
         [Fact]
         public async Task InfoFilterNotExistAsync()
         {
-            await Assert.ThrowsAsync<RedisServerException>(() => Db.BloomFilterInfoAsync(FilterName()));
+            await Assert.ThrowsAsync<RedisServerException>(() => _bloomFilter.InfoAsync(FilterName()));
         }
 
         [Fact]
@@ -307,12 +314,12 @@ namespace NRedisBloom.Tests
             var existingFilter = FilterName();
             var newFilter = existingFilter + "New";
 
-            Db.BloomFilterAddMultiple(existingFilter, "foo", "bar");
+            _bloomFilter.AddMultiple(existingFilter, "foo", "bar");
 
             var iterator = 0L;
             while (true)
             {
-                var scanDump = Db.BloomFilterScanDump(existingFilter, iterator);
+                var scanDump = _bloomFilter.ScanDump(existingFilter, iterator);
                 iterator = scanDump.Iterator;
 
                 if (iterator == 0)
@@ -322,7 +329,7 @@ namespace NRedisBloom.Tests
 
                 Assert.True(scanDump.Data.Length > 0);
 
-                var loadResult = Db.BloomFilterLoadChunk(newFilter, iterator, scanDump.Data);
+                var loadResult = _bloomFilter.LoadChunk(newFilter, iterator, scanDump.Data);
                 Assert.True(loadResult);
             }
         }
@@ -333,12 +340,12 @@ namespace NRedisBloom.Tests
             var existingFilter = FilterName();
             var newFilter = existingFilter + "New";
 
-            await Db.BloomFilterAddMultipleAsync(existingFilter, "foo", "bar", "baz");
+            await _bloomFilter.AddMultipleAsync(existingFilter, "foo", "bar", "baz");
 
             var iterator = 0L;
             while (true)
             {
-                var scanDump = await Db.BloomFilterScanDumpAsync(existingFilter, iterator);
+                var scanDump = await _bloomFilter.ScanDumpAsync(existingFilter, iterator);
                 iterator = scanDump.Iterator;
 
                 if (iterator == 0)
@@ -348,14 +355,14 @@ namespace NRedisBloom.Tests
 
                 Assert.True(scanDump.Data.Length > 0);
 
-                var loadResult = await Db.BloomFilterLoadChunkAsync(newFilter, iterator, scanDump.Data);
+                var loadResult = await _bloomFilter.LoadChunkAsync(newFilter, iterator, scanDump.Data);
                 Assert.True(loadResult);
             }
         }
 
         private string FilterName([CallerMemberName] string memberName = "")
         {
-            return $"{nameof(BloomFilterTests)}_{memberName}";
+            return $"{nameof(BloomFilterClientTests)}_{memberName}";
         }
     }
 }

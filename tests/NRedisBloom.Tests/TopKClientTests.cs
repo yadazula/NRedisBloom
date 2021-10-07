@@ -7,18 +7,25 @@ using Xunit;
 
 namespace NRedisBloom.Tests
 {
-    public class TopKTests : TestBase
+    public class TopKClientTests : TestBase
     {
+        private readonly TopKClient _topk;
+
+        public TopKClientTests()
+        {
+            _topk = new TopKClient(Db);
+        }
+
         [Fact]
         public void ReserveBasic()
         {
-            Assert.True(Db.TopKReserve(FilterName(), 50, 2000, 7, 0.925));
+            Assert.True(_topk.Reserve(FilterName(), 50, 2000, 7, 0.925));
         }
 
         [Fact]
         public async Task ReserveBasicAsync()
         {
-            Assert.True(await Db.TopKReserveAsync(FilterName(), 50, 2000, 7, 0.925));
+            Assert.True(await _topk.ReserveAsync(FilterName(), 50, 2000, 7, 0.925));
         }
 
         [Fact]
@@ -26,9 +33,9 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            Assert.True(Db.TopKReserve(filterName, 50));
+            Assert.True(_topk.Reserve(filterName, 50));
 
-            var droppedItems = Db.TopKAdd(filterName, "foo", "bar");
+            var droppedItems = _topk.Add(filterName, "foo", "bar");
 
             foreach (var droppedItem in droppedItems)
             {
@@ -41,9 +48,9 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            Assert.True(await Db.TopKReserveAsync(filterName, 50));
+            Assert.True(await _topk.ReserveAsync(filterName, 50));
 
-            var droppedItems = await Db.TopKAddAsync(filterName, "foo", "bar");
+            var droppedItems = await _topk.AddAsync(filterName, "foo", "bar");
 
             foreach (var droppedItem in droppedItems)
             {
@@ -54,13 +61,13 @@ namespace NRedisBloom.Tests
         [Fact]
         public void AddFilterNotExist()
         {
-            Assert.Throws<RedisServerException>(() => Db.TopKAdd(FilterName(), "foo"));
+            Assert.Throws<RedisServerException>(() => _topk.Add(FilterName(), "foo"));
         }
 
         [Fact]
         public async Task AddFilterNotExistAsync()
         {
-            await Assert.ThrowsAsync<RedisServerException>(() => Db.TopKAddAsync(FilterName(), "foo"));
+            await Assert.ThrowsAsync<RedisServerException>(() => _topk.AddAsync(FilterName(), "foo"));
         }
 
         [Fact]
@@ -68,11 +75,11 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            Db.TopKReserve(filterName, 50);
+            _topk.Reserve(filterName, 50);
 
-            Db.TopKAdd(filterName, "foo", "bar");
+            _topk.Add(filterName, "foo", "bar");
 
-            var droppedItem = Db.TopKIncrementBy(filterName, "foo", 3);
+            var droppedItem = _topk.IncrementBy(filterName, "foo", 3);
 
             Assert.Null(droppedItem);
         }
@@ -82,11 +89,11 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            await Db.TopKReserveAsync(filterName, 50);
+            await _topk.ReserveAsync(filterName, 50);
 
-            await Db.TopKAddAsync(filterName, "foo", "bar");
+            await _topk.AddAsync(filterName, "foo", "bar");
 
-            var droppedItem = await Db.TopKIncrementByAsync(filterName, "foo", 3);
+            var droppedItem = await _topk.IncrementByAsync(filterName, "foo", 3);
 
             Assert.Null(droppedItem);
         }
@@ -96,11 +103,11 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            Db.TopKReserve(filterName, 50);
+            _topk.Reserve(filterName, 50);
 
-            Db.TopKAdd(filterName, "foo", "bar");
+            _topk.Add(filterName, "foo", "bar");
 
-            var result = Db.TopKQuery(filterName, "foo", "nonexist");
+            var result = _topk.Query(filterName, "foo", "nonexist");
 
             Assert.Equal(2, result.Length);
             Assert.True(result[0]);
@@ -112,11 +119,11 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            await Db.TopKReserveAsync(filterName, 50);
+            await _topk.ReserveAsync(filterName, 50);
 
-            await Db.TopKAddAsync(filterName, "foo", "bar");
+            await _topk.AddAsync(filterName, "foo", "bar");
 
-            var result = await Db.TopKQueryAsync(filterName, "foo", "nonexist");
+            var result = await _topk.QueryAsync(filterName, "foo", "nonexist");
 
             Assert.Equal(2, result.Length);
             Assert.True(result[0]);
@@ -128,13 +135,13 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            Db.TopKReserve(filterName, 50);
+            _topk.Reserve(filterName, 50);
 
-            Db.TopKAdd(filterName, "foo");
+            _topk.Add(filterName, "foo");
 
-            Db.TopKIncrementBy(filterName, "foo", 2);
+            _topk.IncrementBy(filterName, "foo", 2);
 
-            var result = Db.TopKCount(filterName, "foo", "nonexist");
+            var result = _topk.Count(filterName, "foo", "nonexist");
 
             Assert.Equal(2, result.Length);
             Assert.Equal(3, result[0]);
@@ -146,13 +153,13 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            await Db.TopKReserveAsync(filterName, 50);
+            await _topk.ReserveAsync(filterName, 50);
 
-            await Db.TopKAddAsync(filterName, "foo");
+            await _topk.AddAsync(filterName, "foo");
 
-            await Db.TopKIncrementByAsync(filterName, "foo", 2);
+            await _topk.IncrementByAsync(filterName, "foo", 2);
 
-            var result = await Db.TopKCountAsync(filterName, "foo", "nonexist");
+            var result = await _topk.CountAsync(filterName, "foo", "nonexist");
 
             Assert.Equal(2, result.Length);
             Assert.Equal(3, result[0]);
@@ -164,11 +171,11 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            Db.TopKReserve(filterName, 50);
+            _topk.Reserve(filterName, 50);
 
-            Db.TopKAdd(filterName, "foo", "bar");
+            _topk.Add(filterName, "foo", "bar");
 
-            var result = Db.TopKList(filterName);
+            var result = _topk.List(filterName);
 
             Assert.Equal(50, result.Length);
             Assert.Contains("foo", result);
@@ -180,11 +187,11 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            await Db.TopKReserveAsync(filterName, 50);
+            await _topk.ReserveAsync(filterName, 50);
 
-            await Db.TopKAddAsync(filterName, "foo", "bar");
+            await _topk.AddAsync(filterName, "foo", "bar");
 
-            var result = await Db.TopKListAsync(filterName);
+            var result = await _topk.ListAsync(filterName);
 
             Assert.Equal(50, result.Length);
             Assert.Contains("foo", result);
@@ -201,9 +208,9 @@ namespace NRedisBloom.Tests
             const long depth = 7;
             const double decay = 0.925;
 
-            Db.TopKReserve(filterName, topk, width, depth, decay);
+            _topk.Reserve(filterName, topk, width, depth, decay);
 
-            var topKInfo = Db.TopKInfo(filterName);
+            var topKInfo = _topk.Info(filterName);
 
             Assert.Equal(topk, topKInfo.K);
             Assert.Equal(width, topKInfo.Width);
@@ -221,9 +228,9 @@ namespace NRedisBloom.Tests
             const long depth = 7;
             const double decay = 0.925;
 
-            await Db.TopKReserveAsync(filterName, topk, width, depth, decay);
+            await _topk.ReserveAsync(filterName, topk, width, depth, decay);
 
-            var topKInfo = await Db.TopKInfoAsync(filterName);
+            var topKInfo = await _topk.InfoAsync(filterName);
 
             Assert.Equal(topk, topKInfo.K);
             Assert.Equal(width, topKInfo.Width);
@@ -234,18 +241,18 @@ namespace NRedisBloom.Tests
         [Fact]
         public void InfoFilterNotExist()
         {
-            Assert.Throws<RedisServerException>(() => Db.TopKInfo(FilterName()));
+            Assert.Throws<RedisServerException>(() => _topk.Info(FilterName()));
         }
 
         [Fact]
         public async Task InfoFilterNotExistAsync()
         {
-            await Assert.ThrowsAsync<RedisServerException>(() => Db.TopKInfoAsync(FilterName()));
+            await Assert.ThrowsAsync<RedisServerException>(() => _topk.InfoAsync(FilterName()));
         }
 
         private string FilterName([CallerMemberName] string memberName = "")
         {
-            return $"{nameof(TopKTests)}_{memberName}";
+            return $"{nameof(TopKClientTests)}_{memberName}";
         }
     }
 }

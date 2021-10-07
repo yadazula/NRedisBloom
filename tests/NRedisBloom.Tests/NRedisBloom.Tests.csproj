@@ -31,8 +31,4 @@
     <ProjectReference Include="..\..\src\NRedisBloom\NRedisBloom.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="coverage-results" />
-  </ItemGroup>
-
 </Project>

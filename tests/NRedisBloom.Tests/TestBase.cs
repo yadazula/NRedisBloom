@@ -7,8 +7,8 @@ namespace NRedisBloom.Tests
     [Collection("Non-Parallel Collection")]
     public abstract class TestBase : IDisposable
     {
-        private ConnectionMultiplexer _muxer;
-        protected IDatabase Db { get; private set; }
+        private readonly ConnectionMultiplexer _muxer;
+        protected IDatabase Db { get; }
 
         protected TestBase()
         {

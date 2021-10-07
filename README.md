@@ -29,48 +29,52 @@ PM> Install-Package NRedisBloom
 ```csharp
 // Create redis connection
 var muxer = ConnectionMultiplexer.Connect(options);
-var redis = muxer.GetDatabase();
+var db = muxer.GetDatabase();
 
 // Bloom Filter commands
-await redis.BloomFilterReserveAsync(key, capacity, errorRate);
-await redis.BloomFilterAddAsync(key, item);
-await redis.BloomFilterAddMultipleAsync(key, item, item2);
-await redis.BloomFilterInsertAsync(key, insertOptions, item, item2);
-await redis.BloomFilterExistsAsync(key, item);
-await redis.BloomFilterExistsMultipleAsync(key, item);
-await redis.BloomFilterScanDumpAsync(key, iterator);
-await redis.BloomFilterLoadChunkAsync(key, iterator, dumpData);
-await redis.BloomFilterInfoAsync(key);
+var bloomFilter = new BloomFilterClient(db);
+await bloomFilter.ReserveAsync(key, capacity, errorRate);
+await bloomFilter.AddAsync(key, item);
+await bloomFilter.AddMultipleAsync(key, item, item2);
+await bloomFilter.InsertAsync(key, insertOptions, item, item2);
+await bloomFilter.ExistsAsync(key, item);
+await bloomFilter.ExistsMultipleAsync(key, item);
+await bloomFilter.ScanDumpAsync(key, iterator);
+await bloomFilter.LoadChunkAsync(key, iterator, dumpData);
+await bloomFilter.InfoAsync(key);
 
 // Cuckoo Filter commands
-await redis.CuckooFilterReserveAsync(key, capacity);
-await redis.CuckooFilterAddAsync(key, item);
-await redis.CuckooFilterAddAdvancedAsync(key, item);
-await redis.CuckooFilterInsertAsync(key, insertOptions, item, item2);
-await redis.CuckooFilterInsertAdvanced(key, insertOptions, item, item2);
-await redis.CuckooFilterExistsAsync(key, item);
-await redis.CuckooFilterDeleteAsync(key, item);
-await redis.CuckooFilterCountAsync(key, item);
-await redis.CuckooFilterScanDumpAsync(key, iterator);
-await redis.CuckooFilterLoadChunkAsync(key, iterator, dumpData);
-await redis.CuckooFilterInfoAsync(key);
+var cuckooFilter = new CuckooFilterClient(db);
+await cuckooFilter.ReserveAsync(key, capacity);
+await cuckooFilter.AddAsync(key, item);
+await cuckooFilter.AddAdvancedAsync(key, item);
+await cuckooFilter.InsertAsync(key, insertOptions, item, item2);
+await cuckooFilter.InsertAdvanced(key, insertOptions, item, item2);
+await cuckooFilter.ExistsAsync(key, item);
+await cuckooFilter.DeleteAsync(key, item);
+await cuckooFilter.CountAsync(key, item);
+await cuckooFilter.ScanDumpAsync(key, iterator);
+await cuckooFilter.LoadChunkAsync(key, iterator, dumpData);
+await cuckooFilter.InfoAsync(key);
 
 // Count-Min Sketch commands
-await redis.CountMinSketchInitByDimAsync(key, width, depth);
-await redis.CountMinSketchInitByProbAsync(key, error, probability);
-await redis.CountMinSketchIncrByAsync(key, item, increment);
-await redis.CountMinSketchQueryAsync(key, item);
-await redis.CountMinSketchMergeAsync(destinationKey, sourceKey);
-await redis.CountMinSketchInfoAsync(key);
+var countMinSketch = new CountMinSketchClient(db);
+await countMinSketch.InitByDimAsync(key, width, depth);
+await countMinSketch.InitByProbAsync(key, error, probability);
+await countMinSketch.IncrByAsync(key, item, increment);
+await countMinSketch.QueryAsync(key, item);
+await countMinSketch.MergeAsync(destinationKey, sourceKey);
+await countMinSketch.InfoAsync(key);
 
 // Top-K commands
-await redis.TopKReserveAsync(key, topk, width, depth, decay);
-await redis.TopKAddAsync(key, item);
-await redis.TopKIncrementByAsync(key, item, increment);
-await redis.TopKQueryAsync(key, item);
-await redis.TopKCountAsync(key, item);
-await redis.TopKListAsync(key);
-await redis.TopKInfoAsync(key);
+var topk = new TopKClient(db);
+await topk.ReserveAsync(key, topk, width, depth, decay);
+await topk.AddAsync(key, item);
+await topk.IncrementByAsync(key, item, increment);
+await topk.QueryAsync(key, item);
+await topk.CountAsync(key, item);
+await topk.ListAsync(key);
+await topk.InfoAsync(key);
 ```
 
 Questions and Contributions

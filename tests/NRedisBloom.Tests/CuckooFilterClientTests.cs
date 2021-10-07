@@ -6,54 +6,61 @@ using Xunit;
 
 namespace NRedisBloom.Tests
 {
-    public class CuckooFilterTests : TestBase
+    public class CuckooFilterClientTests : TestBase
     {
+        private readonly CuckooFilterClient _cuckooFilter;
+
+        public CuckooFilterClientTests()
+        {
+            _cuckooFilter = new CuckooFilterClient(Db);
+        }
+
         [Fact]
         public void ReserveBasic()
         {
-            Assert.True(Db.CuckooFilterReserve(FilterName(), 100));
+            Assert.True(_cuckooFilter.Reserve(FilterName(), 100));
         }
 
         [Fact]
         public async Task ReserveBasicAsync()
         {
-            Assert.True(await Db.CuckooFilterReserveAsync(FilterName(), 100));
+            Assert.True(await _cuckooFilter.ReserveAsync(FilterName(), 100));
         }
 
         [Fact]
         public void ReserveWithOptionalParameters()
         {
-            Assert.True(Db.CuckooFilterReserve(FilterName(), 100, 8, 20, 2));
+            Assert.True(_cuckooFilter.Reserve(FilterName(), 100, 8, 20, 2));
         }
 
         [Fact]
         public async Task ReserveWithOptionalParametersAsync()
         {
-            Assert.True(await Db.CuckooFilterReserveAsync(FilterName(), 100, 8, 20, 2));
+            Assert.True(await _cuckooFilter.ReserveAsync(FilterName(), 100, 8, 20, 2));
         }
 
         [Fact]
         public void AddBasic()
         {
-            Assert.True(Db.CuckooFilterAdd(FilterName(), "foo"));
+            Assert.True(_cuckooFilter.Add(FilterName(), "foo"));
         }
 
         [Fact]
         public async Task AddBasicAsync()
         {
-            Assert.True(await Db.CuckooFilterAddAsync(FilterName(), "foo"));
+            Assert.True(await _cuckooFilter.AddAsync(FilterName(), "foo"));
         }
 
         [Fact]
         public void AddAdvanced()
         {
-            Assert.True(Db.CuckooFilterAddAdvanced(FilterName(), "foo"));
+            Assert.True(_cuckooFilter.AddAdvanced(FilterName(), "foo"));
         }
 
         [Fact]
         public async Task AddAdvancedAsync()
         {
-            Assert.True(await Db.CuckooFilterAddAdvancedAsync(FilterName(), "foo"));
+            Assert.True(await _cuckooFilter.AddAdvancedAsync(FilterName(), "foo"));
         }
 
         [Fact]
@@ -61,9 +68,9 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            Db.CuckooFilterAdd(filterName, "foo");
+            _cuckooFilter.Add(filterName, "foo");
 
-            Assert.False(Db.CuckooFilterAddAdvanced(filterName, "foo"));
+            Assert.False(_cuckooFilter.AddAdvanced(filterName, "foo"));
         }
 
         [Fact]
@@ -71,9 +78,9 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            await Db.CuckooFilterAddAsync(filterName, "foo");
+            await _cuckooFilter.AddAsync(filterName, "foo");
 
-            Assert.False(await Db.CuckooFilterAddAdvancedAsync(filterName, "foo"));
+            Assert.False(await _cuckooFilter.AddAdvancedAsync(filterName, "foo"));
         }
 
         [Fact]
@@ -81,7 +88,7 @@ namespace NRedisBloom.Tests
         {
             var insertOptions = new InsertOptions { Capacity = 1000, NoCreate = false, };
 
-            var result = Db.CuckooFilterInsert(FilterName(), insertOptions, "foo", "bar");
+            var result = _cuckooFilter.Insert(FilterName(), insertOptions, "foo", "bar");
 
             Assert.Equal(2, result.Length);
             foreach (var item in result)
@@ -95,7 +102,7 @@ namespace NRedisBloom.Tests
         {
             var insertOptions = new InsertOptions { Capacity = 1000, NoCreate = false, };
 
-            var result = await Db.CuckooFilterInsertAsync(FilterName(), insertOptions, "foo", "bar");
+            var result = await _cuckooFilter.InsertAsync(FilterName(), insertOptions, "foo", "bar");
 
             Assert.Equal(2, result.Length);
             foreach (var item in result)
@@ -110,7 +117,7 @@ namespace NRedisBloom.Tests
             var insertOptions = new InsertOptions { NoCreate = true };
 
             Assert.Throws<RedisServerException>(() =>
-                Db.CuckooFilterInsert(FilterName(), insertOptions, "foo"));
+                _cuckooFilter.Insert(FilterName(), insertOptions, "foo"));
         }
 
         [Fact]
@@ -119,7 +126,7 @@ namespace NRedisBloom.Tests
             var insertOptions = new InsertOptions { NoCreate = true };
 
             await Assert.ThrowsAsync<RedisServerException>(() =>
-                Db.CuckooFilterInsertAsync(FilterName(), insertOptions, "foo"));
+                _cuckooFilter.InsertAsync(FilterName(), insertOptions, "foo"));
         }
 
         [Fact]
@@ -127,7 +134,7 @@ namespace NRedisBloom.Tests
         {
             var insertOptions = new InsertOptions { Capacity = 1000, NoCreate = false, };
 
-            var result = Db.CuckooFilterInsertAdvanced(FilterName(), insertOptions, "foo", "bar");
+            var result = _cuckooFilter.InsertAdvanced(FilterName(), insertOptions, "foo", "bar");
 
             Assert.Equal(2, result.Length);
             foreach (var item in result)
@@ -141,9 +148,9 @@ namespace NRedisBloom.Tests
         {
             var insertOptions = new InsertOptions { Capacity = 1000, NoCreate = false, };
 
-            Db.CuckooFilterInsert(FilterName(), insertOptions, "foo", "bar");
+            _cuckooFilter.Insert(FilterName(), insertOptions, "foo", "bar");
 
-            var result = Db.CuckooFilterInsertAdvanced(FilterName(), insertOptions, "foo", "bar");
+            var result = _cuckooFilter.InsertAdvanced(FilterName(), insertOptions, "foo", "bar");
 
             Assert.Equal(2, result.Length);
             foreach (var item in result)
@@ -157,7 +164,7 @@ namespace NRedisBloom.Tests
         {
             var insertOptions = new InsertOptions { Capacity = 1000, NoCreate = false, };
 
-            var result = await Db.CuckooFilterInsertAdvancedAsync(FilterName(), insertOptions, "foo", "bar");
+            var result = await _cuckooFilter.InsertAdvancedAsync(FilterName(), insertOptions, "foo", "bar");
 
             Assert.Equal(2, result.Length);
             foreach (var item in result)
@@ -171,9 +178,9 @@ namespace NRedisBloom.Tests
         {
             var insertOptions = new InsertOptions { Capacity = 1000, NoCreate = false, };
 
-            await Db.CuckooFilterInsertAsync(FilterName(), insertOptions, "foo", "bar");
+            await _cuckooFilter.InsertAsync(FilterName(), insertOptions, "foo", "bar");
 
-            var result = await Db.CuckooFilterInsertAdvancedAsync(FilterName(), insertOptions, "foo", "bar");
+            var result = await _cuckooFilter.InsertAdvancedAsync(FilterName(), insertOptions, "foo", "bar");
 
             Assert.Equal(2, result.Length);
             foreach (var item in result)
@@ -185,13 +192,13 @@ namespace NRedisBloom.Tests
         [Fact]
         public void ExistsNonExist()
         {
-            Assert.False(Db.CuckooFilterExists(FilterName(), "foo"));
+            Assert.False(_cuckooFilter.Exists(FilterName(), "foo"));
         }
 
         [Fact]
         public async Task ExistsNonExistAsync()
         {
-            Assert.False(await Db.CuckooFilterExistsAsync(FilterName(), "foo"));
+            Assert.False(await _cuckooFilter.ExistsAsync(FilterName(), "foo"));
         }
 
         [Fact]
@@ -199,9 +206,9 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            Assert.True(Db.CuckooFilterAdd(filterName, "foo"));
-            Assert.True(Db.CuckooFilterExists(filterName, "foo"));
-            Assert.False(Db.CuckooFilterExists(filterName, "bar"));
+            Assert.True(_cuckooFilter.Add(filterName, "foo"));
+            Assert.True(_cuckooFilter.Exists(filterName, "foo"));
+            Assert.False(_cuckooFilter.Exists(filterName, "bar"));
         }
 
         [Fact]
@@ -209,9 +216,9 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            Assert.True(await Db.CuckooFilterAddAsync(filterName, "foo"));
-            Assert.True(await Db.CuckooFilterExistsAsync(filterName, "foo"));
-            Assert.False(await Db.CuckooFilterExistsAsync(filterName, "bar"));
+            Assert.True(await _cuckooFilter.AddAsync(filterName, "foo"));
+            Assert.True(await _cuckooFilter.ExistsAsync(filterName, "foo"));
+            Assert.False(await _cuckooFilter.ExistsAsync(filterName, "bar"));
         }
 
         [Fact]
@@ -219,8 +226,8 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            Db.CuckooFilterAdd(FilterName(), "foo");
-            Assert.True(Db.CuckooFilterDelete(FilterName(), "foo"));
+            _cuckooFilter.Add(FilterName(), "foo");
+            Assert.True(_cuckooFilter.Delete(FilterName(), "foo"));
         }
 
         [Fact]
@@ -228,14 +235,14 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            await Db.CuckooFilterAddAsync(FilterName(), "foo");
-            Assert.True(await Db.CuckooFilterDeleteAsync(FilterName(), "foo"));
+            await _cuckooFilter.AddAsync(FilterName(), "foo");
+            Assert.True(await _cuckooFilter.DeleteAsync(FilterName(), "foo"));
         }
 
         [Fact]
         public void DeleteFilterNotExist()
         {
-            Assert.Throws<RedisServerException>(() => Db.CuckooFilterDelete(FilterName(), "foo"));
+            Assert.Throws<RedisServerException>(() => _cuckooFilter.Delete(FilterName(), "foo"));
         }
 
         [Fact]
@@ -243,15 +250,15 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            Db.CuckooFilterReserve(filterName, 100);
+            _cuckooFilter.Reserve(filterName, 100);
 
-            Assert.False(Db.CuckooFilterDelete(filterName, "bar"));
+            Assert.False(_cuckooFilter.Delete(filterName, "bar"));
         }
 
         [Fact]
         public async Task DeleteFilterNotExistAsync()
         {
-            await Assert.ThrowsAsync<RedisServerException>(() => Db.CuckooFilterDeleteAsync(FilterName(), "foo"));
+            await Assert.ThrowsAsync<RedisServerException>(() => _cuckooFilter.DeleteAsync(FilterName(), "foo"));
         }
 
         [Fact]
@@ -259,9 +266,9 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            await Db.CuckooFilterReserveAsync(filterName, 100);
+            await _cuckooFilter.ReserveAsync(filterName, 100);
 
-            Assert.False(await Db.CuckooFilterDeleteAsync(filterName, "bar"));
+            Assert.False(await _cuckooFilter.DeleteAsync(filterName, "bar"));
         }
 
         [Fact]
@@ -269,9 +276,9 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            Db.CuckooFilterAdd(filterName, "foo");
+            _cuckooFilter.Add(filterName, "foo");
 
-            Assert.Equal(1, Db.CuckooFilterCount(filterName, "foo"));
+            Assert.Equal(1, _cuckooFilter.Count(filterName, "foo"));
         }
 
         [Fact]
@@ -279,10 +286,10 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            Db.CuckooFilterAdd(filterName, "foo");
-            Db.CuckooFilterAdd(filterName, "foo");
+            _cuckooFilter.Add(filterName, "foo");
+            _cuckooFilter.Add(filterName, "foo");
 
-            Assert.Equal(2, Db.CuckooFilterCount(filterName, "foo"));
+            Assert.Equal(2, _cuckooFilter.Count(filterName, "foo"));
         }
 
         [Fact]
@@ -290,9 +297,9 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            await Db.CuckooFilterAddAsync(filterName, "foo");
+            await _cuckooFilter.AddAsync(filterName, "foo");
 
-            Assert.Equal(1, await Db.CuckooFilterCountAsync(filterName, "foo"));
+            Assert.Equal(1, await _cuckooFilter.CountAsync(filterName, "foo"));
         }
 
         [Fact]
@@ -300,10 +307,10 @@ namespace NRedisBloom.Tests
         {
             var filterName = FilterName();
 
-            await Db.CuckooFilterAddAsync(filterName, "foo");
-            await Db.CuckooFilterAddAsync(filterName, "foo");
+            await _cuckooFilter.AddAsync(filterName, "foo");
+            await _cuckooFilter.AddAsync(filterName, "foo");
 
-            Assert.Equal(2, await Db.CuckooFilterCountAsync(filterName, "foo"));
+            Assert.Equal(2, await _cuckooFilter.CountAsync(filterName, "foo"));
         }
 
         [Fact]
@@ -312,12 +319,12 @@ namespace NRedisBloom.Tests
             var existingFilter = FilterName();
             var newFilter = existingFilter + "New";
 
-            Db.CuckooFilterInsert(existingFilter, "foo", "bar");
+            _cuckooFilter.Insert(existingFilter, "foo", "bar");
 
             var iterator = 0L;
             while (true)
             {
-                var scanDump = Db.CuckooFilterScanDump(existingFilter, iterator);
+                var scanDump = _cuckooFilter.ScanDump(existingFilter, iterator);
                 iterator = scanDump.Iterator;
 
                 if (iterator == 0)
@@ -327,7 +334,7 @@ namespace NRedisBloom.Tests
 
                 Assert.True(scanDump.Data.Length > 0);
 
-                var loadResult = Db.CuckooFilterLoadChunk(newFilter, iterator, scanDump.Data);
+                var loadResult = _cuckooFilter.LoadChunk(newFilter, iterator, scanDump.Data);
                 Assert.True(loadResult);
             }
         }
@@ -338,12 +345,12 @@ namespace NRedisBloom.Tests
             var existingFilter = FilterName();
             var newFilter = existingFilter + "New";
 
-            await Db.CuckooFilterInsertAsync(existingFilter, "foo", "bar", "baz");
+            await _cuckooFilter.InsertAsync(existingFilter, "foo", "bar", "baz");
 
             var iterator = 0L;
             while (true)
             {
-                var scanDump = await Db.CuckooFilterScanDumpAsync(existingFilter, iterator);
+                var scanDump = await _cuckooFilter.ScanDumpAsync(existingFilter, iterator);
                 iterator = scanDump.Iterator;
 
                 if (iterator == 0)
@@ -353,7 +360,7 @@ namespace NRedisBloom.Tests
 
                 Assert.True(scanDump.Data.Length > 0);
 
-                var loadResult = await Db.CuckooFilterLoadChunkAsync(newFilter, iterator, scanDump.Data);
+                var loadResult = await _cuckooFilter.LoadChunkAsync(newFilter, iterator, scanDump.Data);
                 Assert.True(loadResult);
             }
         }
@@ -368,10 +375,10 @@ namespace NRedisBloom.Tests
             const int expansion = 2;
             const int maxIterations = 5;
 
-            Db.CuckooFilterReserve(filterName, capacity, bucketSize: bucketSize, expansion: expansion,
+            _cuckooFilter.Reserve(filterName, capacity, bucketSize: bucketSize, expansion: expansion,
                 maxIterations: maxIterations);
 
-            var filterInfo = Db.CuckooFilterInfo(filterName);
+            var filterInfo = _cuckooFilter.Info(filterName);
 
             Assert.NotNull(filterInfo);
             Assert.True(filterInfo.Size > 0);
@@ -391,10 +398,10 @@ namespace NRedisBloom.Tests
             const int expansion = 2;
             const int maxIterations = 5;
 
-            await Db.CuckooFilterReserveAsync(filterName, capacity, bucketSize: bucketSize, expansion: expansion,
+            await _cuckooFilter.ReserveAsync(filterName, capacity, bucketSize: bucketSize, expansion: expansion,
                 maxIterations: maxIterations);
 
-            var filterInfo = await Db.CuckooFilterInfoAsync(filterName);
+            var filterInfo = await _cuckooFilter.InfoAsync(filterName);
 
             Assert.NotNull(filterInfo);
             Assert.True(filterInfo.Size > 0);
@@ -407,18 +414,18 @@ namespace NRedisBloom.Tests
         [Fact]
         public void InfoFilterNotExist()
         {
-            Assert.Throws<RedisServerException>(() => Db.CuckooFilterInfo(FilterName()));
+            Assert.Throws<RedisServerException>(() => _cuckooFilter.Info(FilterName()));
         }
 
         [Fact]
         public async Task InfoFilterNotExistAsync()
         {
-            await Assert.ThrowsAsync<RedisServerException>(() => Db.CuckooFilterInfoAsync(FilterName()));
+            await Assert.ThrowsAsync<RedisServerException>(() => _cuckooFilter.InfoAsync(FilterName()));
         }
 
         private string FilterName([CallerMemberName] string memberName = "")
         {
-            return $"{nameof(CuckooFilterTests)}_{memberName}";
+            return $"{nameof(CuckooFilterClientTests)}_{memberName}";
         }
     }
 }

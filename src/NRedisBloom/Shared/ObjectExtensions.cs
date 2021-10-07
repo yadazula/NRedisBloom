@@ -5,7 +5,7 @@ namespace NRedisBloom.Shared
     /// <summary>
     /// Extension methods
     /// </summary>
-    public static class ObjectExtensions
+    internal static class ObjectExtensions
     {
         /// <summary>
         /// Adds a value to the beginning of the sequence
