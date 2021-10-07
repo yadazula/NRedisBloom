@@ -1,5 +1,6 @@
 [![Build](https://github.com/yadazula/NRedisBloom/actions/workflows/CI.yml/badge.svg)](https://github.com/yadazula/NRedisBloom/actions/workflows/CI.yml)
 [![codecov](https://codecov.io/gh/yadazula/NRedisBloom/branch/main/graph/badge.svg)](https://codecov.io/gh/yadazula/NRedisBloom)
+[![Nuget](https://img.shields.io/nuget/v/NRedisBloom)](https://www.nuget.org/packages/NRedisBloom/)
 
 # NRedisBloom
 
