@@ -8,6 +8,7 @@ ProjectSection(SolutionItems) = preProject
 	LICENSE = LICENSE
 	README.md = README.md
 	.github\workflows\CI.yml = .github\workflows\CI.yml
+	version.json = version.json
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NRedisBloom", "src\NRedisBloom\NRedisBloom.csproj", "{C4943B3B-11E1-460B-8744-8613BAE7F66B}"
